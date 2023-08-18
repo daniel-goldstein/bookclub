@@ -1,0 +1,78 @@
+<div>
+  <h2><%= @title %></h2>
+
+  <.form
+    let={f}
+    for={@search}
+    id="book-nomination-form-search"
+    phx-target={@myself}
+    phx-submit="search">
+
+    <%= label f, :search %>
+    <%= text_input f, :search %>
+
+    <%= if @search_results != [] do %>
+    <div id="search-results" class="relative" phx-update="replace">
+      <div class="absolute">
+        <table style="height: 200px">
+          <tbody id="search-table">
+            <%= for {search_result, i} <- Enum.with_index(@search_results) do %>
+              <tr style="cursor: pointer" phx-click="pick" phx-value-idx={i} phx-target={@myself}>
+                <td>
+                <%= if search_result.cover_id do %>
+                  <img src={"https://covers.openlibrary.org/b/id/#{search_result.cover_id}-S.jpg"}>
+                <% end %>
+                </td>
+                <td>
+                <span>
+                  <%= search_result.title %> | <i><%= search_result.author %></i>
+                </span>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <% end %>
+
+    <div>
+      <%= submit "Search", phx_disable_with: "Searching..." %>
+    </div>
+  </.form>
+  
+  <.form
+    let={f}
+    for={@changeset}
+    id="book-nomination-form"
+    phx-target={@myself}
+    phx-change="validate"
+    phx-submit="save">
+
+    <hr />
+
+    <%= if Map.get(@changeset, "cover_id") do %>
+      <img src={"https://covers.openlibrary.org/b/id/#{@changeset.cover_id}-S.jpg"}>
+    <% end %>
+
+    <%= label f, :title %>
+    <%= text_input f, :title %>
+    <%= error_tag f, :title %>
+
+    <%= label f, :author %>
+    <%= text_input f, :author %>
+    <%= error_tag f, :author %>
+
+    <%= label f, :description %>
+    <%= textarea f, :description %>
+    <%= error_tag f, :description %>
+
+    <%= hidden_input f, :olid %>
+    <%= hidden_input f, :goodreads_id %>
+    <%= hidden_input f, :cover_id %>
+
+    <div>
+      <%= submit "Save", phx_disable_with: "Saving..." %>
+    </div>
+  </.form>
+</div>

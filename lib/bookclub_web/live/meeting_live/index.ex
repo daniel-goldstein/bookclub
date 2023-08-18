@@ -6,6 +6,7 @@ defmodule BookclubWeb.MeetingLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
+    if connected?(socket), do: Meetings.subscribe()
     {:ok, assign(socket, :meetings, list_meetings())}
   end
 
@@ -38,6 +39,22 @@ defmodule BookclubWeb.MeetingLive.Index do
     {:ok, _} = Meetings.delete_meeting(meeting)
 
     {:noreply, assign(socket, :meetings, list_meetings())}
+  end
+
+  @impl true
+  def handle_info({:meeting_created, meeting}, socket) do
+    {:noreply, update(socket, :meetings, fn meetings -> [meeting | meetings] end)}
+  end
+
+  @impl true
+  def handle_info({:meeting_updated, meeting}, socket) do
+    {:noreply, update(socket, :meetings, fn meetings -> [meeting | meetings] end)}
+  end
+
+  @impl true
+  def handle_info({:meeting_deleted, deleted}, socket) do
+    {:noreply,
+     update(socket, :meetings, fn meetings -> Enum.filter(meetings, &(&1.id != deleted.id)) end)}
   end
 
   defp list_meetings do

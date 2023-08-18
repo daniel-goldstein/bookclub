@@ -1,17 +1,107 @@
 <h1><%= @meeting.name %></h1>
+<span><%= live_patch "Back", to: Routes.meeting_index_path(@socket, :index) %></span>
 
-<%= if @live_action in [:edit] do %>
+<hr />
+
+<%= if @live_action in [:nominate] do %>
   <.modal return_to={Routes.meeting_show_path(@socket, :show, @meeting)}>
     <.live_component
-      module={BookclubWeb.MeetingLive.FormComponent}
-      id={@meeting.id}
+      module={BookclubWeb.MeetingLive.BookFormComponent}
+      id={@book.id || :new}
       title={@page_title}
       action={@live_action}
       meeting={@meeting}
+      book={@book}
+      search={%{}}
       return_to={Routes.meeting_show_path(@socket, :show, @meeting)}
     />
   </.modal>
 <% end %>
 
-<span><%= live_patch "Edit", to: Routes.meeting_show_path(@socket, :edit, @meeting), class: "button" %></span> |
-<span><%= live_redirect "Back", to: Routes.meeting_index_path(@socket, :index) %></span>
+<%= if @live_action in [:show_book] do %>
+  <.modal return_to={Routes.meeting_show_path(@socket, :show, @meeting)}>
+  <h2><%= @book.title %></h2>
+
+  <span><i><%= @book.author %></i></span>
+  <%= if @book.goodreads_id do %>
+  <a href={"https://www.goodreads.com/book/show/#{@book.goodreads_id}"}>Goodreads</a>
+  <% end %>
+
+  <hr />
+
+  <p>
+    <%= @book.description %>
+  </p>
+  </.modal>
+<% end %>
+
+<span><%= live_patch "Nominate Book", to: Routes.meeting_show_path(@socket, :nominate, @meeting), class: "button" %></span>
+
+<%# <div> %>
+<%#   <%= for book <- @meeting.nominations do %1> %>
+<%#   <button class="accordion"> %>
+<%#     <%= book.title %1> %>
+<%#   </button> %>
+<%#   <div class="panel"> %>
+<%#     <p><%= book.description %1></p> %>
+<%#   </div> %>
+<%#   <% end %1> %>
+<%# </div> %>
+
+<table>
+  <tbody id="meetings">
+    <%= for book <- @nominations do %>
+      <tr id={"shelf-#{book.id}"}>
+        <td>
+          <%= if book.cover_id do %>
+          <img src={"https://covers.openlibrary.org/b/id/#{book.cover_id}-S.jpg"}>
+          <% end %>
+        </td>
+
+        <td>
+          <span><%= live_patch book.title, to: Routes.meeting_show_path(@socket, :show_book, @meeting, book) %></span>
+        </td>
+        <td>
+          <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: book.id, data: [confirm: "Are you sure?"] %></span>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<h2>Vote!</h2>
+<.live_component
+  module={BookclubWeb.MeetingLive.VoteFormComponent}
+  id={:vote}
+  action={@live_action}
+  meeting={@meeting}
+  nominations={@nominations}
+  return_to={Routes.meeting_show_path(@socket, :show, @meeting)}
+/>
+
+<hr />
+
+<h2>Voting Results</h2>
+
+<%= if @winner do %>
+<div>
+  <span><b>Winner</b>: <%= @winner.title %></span>
+</div>
+<% end %>
+
+<table>
+  <tbody id="voting-results">
+    <%= for book <- @ranked_books do %>
+      <tr id={"results-#{book.id}"}>
+        <td>
+          <span><%= book.title %></span>
+        </td>
+        <td>
+          <span><%= Map.get(@rankings, book.id) |> Enum.join(" , ") %></span>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<span><%= live_patch "Back", to: Routes.meeting_index_path(@socket, :index) %></span>

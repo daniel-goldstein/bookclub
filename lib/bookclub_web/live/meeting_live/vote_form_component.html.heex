@@ -1,0 +1,31 @@
+<div>
+  <.form
+    let={f}
+    for={@changeset}
+    id="book-ballot"
+    phx-target={@myself}
+    phx-change="validate"
+    phx-submit="vote">
+
+    <%= label f, :user %>
+    <%= text_input f, :user %>
+    <%= error_tag f, :user %>
+
+    <%= label f, :ranking %>
+
+    <div id="voting" phx-hook="Sortable" data-list_id="ballot">
+      <%= for {book, i} <- Enum.with_index(@nominations) do %>
+      <div id={"ballot-#{book.id}"} data-id={book.id} style="cursor: grab">
+        <span><%= i + 1 %>.</span>
+        <span><%= book.title %></span>
+      </div>
+      <% end %>
+    </div>
+
+    <br />
+
+    <div>
+      <%= submit "Vote!", phx_disable_with: "Voting..." %>
+    </div>
+  </.form>
+</div>

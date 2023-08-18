@@ -25,7 +25,8 @@ defmodule BookclubWeb.Router do
     live "/meetings/:id/edit", MeetingLive.Index, :edit
 
     live "/meetings/:id", MeetingLive.Show, :show
-    live "/meetings/:id/show/edit", MeetingLive.Show, :edit
+    live "/meetings/:id/nominate", MeetingLive.Show, :nominate
+    live "/meetings/:id/book/:book_id", MeetingLive.Show, :show_book
   end
 
   # Other scopes may use custom stacks.

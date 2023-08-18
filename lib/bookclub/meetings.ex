@@ -18,7 +18,7 @@ defmodule Bookclub.Meetings do
 
   """
   def list_meetings do
-    Repo.all(Meeting)
+    Repo.all(from m in Meeting, order_by: [desc: m.id])
   end
 
   @doc """
@@ -35,7 +35,10 @@ defmodule Bookclub.Meetings do
       ** (Ecto.NoResultsError)
 
   """
-  def get_meeting!(id), do: Repo.get!(Meeting, id)
+  def get_meeting!(id) do
+    from(m in Meeting)
+    |> Repo.get!(id)
+  end
 
   @doc """
   Creates a meeting.
@@ -53,6 +56,7 @@ defmodule Bookclub.Meetings do
     %Meeting{}
     |> Meeting.changeset(attrs)
     |> Repo.insert()
+    |> broadcast(:meeting_created)
   end
 
   @doc """
@@ -71,6 +75,7 @@ defmodule Bookclub.Meetings do
     meeting
     |> Meeting.changeset(attrs)
     |> Repo.update()
+    |> broadcast(:meeting_updated)
   end
 
   @doc """
@@ -87,6 +92,7 @@ defmodule Bookclub.Meetings do
   """
   def delete_meeting(%Meeting{} = meeting) do
     Repo.delete(meeting)
+    |> broadcast(:meeting_deleted)
   end
 
   @doc """
@@ -100,5 +106,16 @@ defmodule Bookclub.Meetings do
   """
   def change_meeting(%Meeting{} = meeting, attrs \\ %{}) do
     Meeting.changeset(meeting, attrs)
+  end
+
+  def subscribe do
+    Phoenix.PubSub.subscribe(Bookclub.PubSub, "meetings")
+  end
+
+  defp broadcast({:error, _reason} = error, _event), do: error
+
+  defp broadcast({:ok, meeting}, event) do
+    Phoenix.PubSub.broadcast(Bookclub.PubSub, "meetings", {event, meeting})
+    {:ok, meeting}
   end
 end

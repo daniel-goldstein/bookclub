@@ -6,6 +6,8 @@ defmodule Bookclub.Meetings.Meeting do
     field :name, :string
     field :date, :date
 
+    has_many :nominations, Bookclub.Meetings.BookNominations.BookNomination
+
     timestamps()
   end
 

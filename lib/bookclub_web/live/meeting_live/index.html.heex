@@ -13,7 +13,7 @@
   </.modal>
 <% end %>
 
-<span><%= live_patch "New Meeting", to: Routes.meeting_index_path(@socket, :new) %></span>
+<span><%= live_patch "New Meeting", to: Routes.meeting_index_path(@socket, :new), class: "button" %></span>
 
 <table>
   <tbody id="meetings">
