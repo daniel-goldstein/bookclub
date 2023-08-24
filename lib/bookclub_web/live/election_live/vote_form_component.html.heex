@@ -1,0 +1,32 @@
+<div>
+  <.form
+    :let={f}
+    for={@changeset}
+    id="book-ballot"
+    phx-target={@myself}
+    phx-change="validate"
+    phx-submit="vote"
+  >
+    <div class="flex-col py-2 max-w-xs">
+      <.input f={f} field={:user} type="text" required={true} />
+    </div>
+
+    <.my_label f={f} field={:ranking} />
+    <div id="voting" phx-hook="Sortable" data-list_id="ballot">
+      <%= for {nomination, i} <- Enum.with_index(@nominations) do %>
+        <div
+          class="shadow items-center my-1 rounded-md p-4 hover:bg-slate-50 cursor-grab"
+          id={"ballot-#{nomination.id}"}
+          data-id={nomination.id}
+          class="ballot-line"
+        >
+          <span><%= i + 1 %>. <%= nomination.book.title %></span>
+        </div>
+      <% end %>
+    </div>
+
+    <br />
+
+    <.save text="Vote!" />
+  </.form>
+</div>

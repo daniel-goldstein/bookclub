@@ -1,9 +1,9 @@
-defmodule BookclubWeb.MeetingLive.VoteFormComponent do
+defmodule BookclubWeb.ElectionLive.VoteFormComponent do
   use BookclubWeb, :live_component
   import Ecto.Query, warn: false
 
-  alias Bookclub.Meetings.BookNominations
-  alias Bookclub.Meetings.Votes.User
+  alias Bookclub.Elections.BookNominations
+  alias Bookclub.Elections.Votes.User
 
   @impl true
   def mount(socket) do
@@ -24,7 +24,7 @@ defmodule BookclubWeb.MeetingLive.VoteFormComponent do
   end
 
   @impl true
-  def handle_event("validate", %{"user" => user_params}, socket) do
+  def handle_event("validate", %{"_target" => ["user", "user"], "user" => user_params}, socket) do
     changeset =
       socket.assigns.user
       |> User.changeset(user_params)
@@ -45,9 +45,9 @@ defmodule BookclubWeb.MeetingLive.VoteFormComponent do
 
   @impl true
   def handle_event("vote", %{"user" => user_params}, socket) do
-    %{meeting: meeting, nominations: nominations} = socket.assigns
+    %{election: election, nominations: nominations} = socket.assigns
 
-    case BookNominations.cast_votes(user_params["user"], meeting, nominations) do
+    case BookNominations.cast_votes(user_params["user"], election, nominations) do
       {:ok, _} ->
         {:noreply,
          socket

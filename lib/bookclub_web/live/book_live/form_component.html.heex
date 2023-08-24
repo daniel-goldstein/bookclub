@@ -1,0 +1,54 @@
+<div>
+  <.form
+    :let={f}
+    for={@search}
+    id="book-nomination-form-search"
+    phx-target={@myself}
+    phx-change="search"
+    phx-submit="search"
+  >
+    <.input f={f} field={:search} type="text" required={false} debounce="500" />
+
+    <%= if @search_results != [] or @bookshelf_results != [] do %>
+      <.book_search_results
+        search_results={@search_results}
+        bookshelf_results={@bookshelf_results}
+        target={@myself}
+      />
+    <% end %>
+  </.form>
+
+  <.form
+    :let={f}
+    for={@changeset}
+    id="book-nomination-form"
+    phx-target={@myself}
+    phx-change="validate"
+    phx-submit="save"
+  >
+    <hr />
+
+    <%= if Map.get(@changeset, "cover_id") do %>
+      <img src={"https://covers.openlibrary.org/b/id/#{@changeset.cover_id}-S.jpg"} />
+    <% end %>
+
+    <div class="flex-col py-2">
+      <.input f={f} field={:title} type="text" required={true} />
+    </div>
+
+    <div class="flex-col py-2">
+      <.input f={f} field={:author} type="text" required={true} />
+    </div>
+
+    <div class="flex-col py-2 mb-4">
+      <.textarea f={f} field={:description} required={false} />
+    </div>
+
+    <%= hidden_input(f, :olid) %>
+    <%= hidden_input(f, :isbn) %>
+    <%= hidden_input(f, :goodreads_id) %>
+    <%= hidden_input(f, :cover_id) %>
+
+    <.save />
+  </.form>
+</div>

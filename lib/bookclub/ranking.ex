@@ -1,12 +1,6 @@
 defmodule Bookclub.Ranking do
-  alias Bookclub.Meetings.BookNominations.BookNomination
-  alias Bookclub.Meetings.Votes.Vote
-
-  def order_by_most_first_rank_votes(books) do
-    books
-    |> Enum.sort_by(&number_of_first_rank_votes/1)
-    |> Enum.reverse()
-  end
+  alias Bookclub.Elections.BookNominations.BookNomination
+  alias Bookclub.Elections.Votes.Vote
 
   def rankings(books) do
     rank_maps =
@@ -26,30 +20,42 @@ defmodule Bookclub.Ranking do
     |> Enum.into(%{})
   end
 
-  def rank_map_to_array(ranks, n_books) do
-    1..n_books
-    |> Enum.map(&Map.get(ranks, &1, 0))
-    |> Enum.to_list()
-  end
+  def instant_runoff(books, losers \\ [])
+  def instant_runoff([], losers), do: {[], losers}
+  def instant_runoff([book], losers), do: {[book], losers}
 
-  def number_of_votes_by_rank(%BookNomination{votes: votes}) do
-    votes
-    |> Enum.group_by(& &1.rank, & &1.rank)
-    |> Enum.map(fn {k, v} -> {k, Enum.count(v)} end)
-    |> Enum.into(%{})
-  end
-
-  def ranked_choice_winner([]), do: {nil, []}
-  def ranked_choice_winner([book], losers), do: {book, losers}
-  def ranked_choice_winner(books, losers \\ []) do
+  def instant_runoff(books, losers) do
     case find_majority_winner(books) do
       nil ->
         {survivors, loser} = remove_loser(books)
-        ranked_choice_winner(survivors, [loser | losers])
+        instant_runoff(survivors, [loser | losers])
+
       winner ->
-        {second_place, others} = ranked_choice_winner(List.delete(books, winner), losers)
-        {winner, [second_place | others]}
+        runners_up = List.delete(books, winner) |> order_by_most_first_rank_votes
+        {[winner | runners_up], losers}
     end
+  end
+
+  def condorcet(books) do
+    books
+    |> Enum.sort_by(&condorcet_rank(&1, List.delete(books, &1)))
+    |> Enum.reverse()
+  end
+
+  def condorcet_rank(book, opponents) do
+    opponents
+    |> Enum.count(&wins_in_head_to_head(book, &1))
+  end
+
+  defp wins_in_head_to_head(%BookNomination{votes: votes}, opponent) do
+    preferred_votes =
+      votes
+      |> Enum.count(fn %{user: user, rank: rank} ->
+        maybe_vote = Enum.find(opponent.votes, &(&1.user == user))
+        maybe_vote == nil || rank < maybe_vote.rank
+      end)
+
+    preferred_votes > Enum.count(votes) / 2
   end
 
   defp find_majority_winner(books) do
@@ -99,9 +105,27 @@ defmodule Bookclub.Ranking do
     end
   end
 
-  # Memoize
   defp number_of_first_rank_votes(%BookNomination{votes: votes}) do
     votes
     |> Enum.count(fn v -> v.rank == 1 end)
+  end
+
+  defp number_of_votes_by_rank(%BookNomination{votes: votes}) do
+    votes
+    |> Enum.group_by(& &1.rank, & &1.rank)
+    |> Enum.map(fn {k, v} -> {k, Enum.count(v)} end)
+    |> Enum.into(%{})
+  end
+
+  defp rank_map_to_array(ranks, n_books) do
+    1..n_books
+    |> Enum.map(&Map.get(ranks, &1, 0))
+    |> Enum.to_list()
+  end
+
+  def order_by_most_first_rank_votes(books) do
+    books
+    |> Enum.sort_by(&number_of_first_rank_votes/1)
+    |> Enum.reverse()
   end
 end

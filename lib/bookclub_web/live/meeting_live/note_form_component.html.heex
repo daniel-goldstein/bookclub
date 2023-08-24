@@ -1,0 +1,22 @@
+<div>
+  <h2 class="text-2xl my-5"><%= @title %></h2>
+
+  <.form
+    :let={f}
+    for={@changeset}
+    id="note-form"
+    phx-target={@myself}
+    phx-change="validate"
+    phx-submit="save"
+  >
+    <div class="flex-col py-2">
+      <.input f={f} field={:user} type="text" required={true} />
+    </div>
+
+    <div class="flex-col py-2 mb-4">
+      <.textarea f={f} field={:content} required={false} />
+    </div>
+
+    <.save />
+  </.form>
+</div>

@@ -1,4 +1,4 @@
-defmodule Bookclub.Meetings.Votes.Vote do
+defmodule Bookclub.Elections.Votes.Vote do
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -6,8 +6,8 @@ defmodule Bookclub.Meetings.Votes.Vote do
     field :user, :string
     field :rank, :integer
 
-    belongs_to :meeting, Bookclub.Meetings.Meeting
-    belongs_to :book_nomination, Bookclub.Meetings.BookNominations.BookNomination
+    belongs_to :election, Bookclub.Elections.Election
+    belongs_to :book_nomination, Bookclub.Elections.BookNominations.BookNomination
 
     timestamps()
   end
@@ -21,9 +21,9 @@ defmodule Bookclub.Meetings.Votes.Vote do
   end
 
   @doc false
-  def book_changeset(vote, meeting, book, attrs \\ %{}) do
+  def nomination_changeset(vote, election, nomination, attrs \\ %{}) do
     changeset(vote, attrs)
-    |> Ecto.Changeset.put_assoc(:book_nomination, book)
-    |> Ecto.Changeset.put_assoc(:meeting, meeting)
+    |> Ecto.Changeset.put_assoc(:book_nomination, nomination)
+    |> Ecto.Changeset.put_assoc(:election, election)
   end
 end

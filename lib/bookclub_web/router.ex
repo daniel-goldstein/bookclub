@@ -8,6 +8,7 @@ defmodule BookclubWeb.Router do
     plug :put_root_layout, {BookclubWeb.LayoutView, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug Plug.Static, at: "/", from: "priv/static/images"
   end
 
   pipeline :api do
@@ -20,13 +21,25 @@ defmodule BookclubWeb.Router do
     get "/", PageController, :index
     live "/light", LightLive
 
+    live "/elections", ElectionLive.Index, :index
+    live "/elections/new", ElectionLive.Index, :new
+    live "/elections/:id/edit", ElectionLive.Index, :edit
+
+    live "/elections/:id", ElectionLive.Show, :show
+    live "/elections/:id/nominate", ElectionLive.Show, :nominate
+    live "/elections/:id/book/:book_id", ElectionLive.Show, :show_book
+
     live "/meetings", MeetingLive.Index, :index
     live "/meetings/new", MeetingLive.Index, :new
     live "/meetings/:id/edit", MeetingLive.Index, :edit
 
     live "/meetings/:id", MeetingLive.Show, :show
-    live "/meetings/:id/nominate", MeetingLive.Show, :nominate
-    live "/meetings/:id/book/:book_id", MeetingLive.Show, :show_book
+    live "/meetings/:id/new", MeetingLive.Show, :new
+    live "/meetings/:id/notes/:note_id/edit", MeetingLive.Show, :edit
+
+    live "/books", BookLive.Index, :index
+    live "/books/new", BookLive.Index, :new
+    live "/books/:id/edit", BookLive.Index, :edit
   end
 
   # Other scopes may use custom stacks.

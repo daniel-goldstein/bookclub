@@ -7,6 +7,7 @@ defmodule Bookclub.Meetings do
   alias Bookclub.Repo
 
   alias Bookclub.Meetings.Meeting
+  alias Bookclub.Books.Book
 
   @doc """
   Returns the list of meetings.
@@ -18,7 +19,7 @@ defmodule Bookclub.Meetings do
 
   """
   def list_meetings do
-    Repo.all(from m in Meeting, order_by: [desc: m.id])
+    Repo.all(from m in Meeting, order_by: [desc_nulls_first: m.date, desc: m.id], preload: :book)
   end
 
   @doc """
@@ -36,7 +37,7 @@ defmodule Bookclub.Meetings do
 
   """
   def get_meeting!(id) do
-    from(m in Meeting)
+    from(b in Meeting, preload: :book)
     |> Repo.get!(id)
   end
 
@@ -52,11 +53,16 @@ defmodule Bookclub.Meetings do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_meeting(attrs \\ %{}) do
+  def create_meeting(nil, attrs) do
     %Meeting{}
     |> Meeting.changeset(attrs)
     |> Repo.insert()
-    |> broadcast(:meeting_created)
+  end
+
+  def create_meeting(%Book{} = book, attrs) do
+    %Meeting{}
+    |> Meeting.book_changeset(book, attrs)
+    |> Repo.insert()
   end
 
   @doc """
@@ -71,11 +77,16 @@ defmodule Bookclub.Meetings do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_meeting(%Meeting{} = meeting, attrs) do
+  def update_meeting(%Meeting{} = meeting, %Book{} = book, attrs) do
+    meeting
+    |> Meeting.book_changeset(book, attrs)
+    |> Repo.update()
+  end
+
+  def update_meeting(%Meeting{} = meeting, nil, attrs) do
     meeting
     |> Meeting.changeset(attrs)
     |> Repo.update()
-    |> broadcast(:meeting_updated)
   end
 
   @doc """
@@ -92,7 +103,6 @@ defmodule Bookclub.Meetings do
   """
   def delete_meeting(%Meeting{} = meeting) do
     Repo.delete(meeting)
-    |> broadcast(:meeting_deleted)
   end
 
   @doc """
@@ -106,16 +116,5 @@ defmodule Bookclub.Meetings do
   """
   def change_meeting(%Meeting{} = meeting, attrs \\ %{}) do
     Meeting.changeset(meeting, attrs)
-  end
-
-  def subscribe do
-    Phoenix.PubSub.subscribe(Bookclub.PubSub, "meetings")
-  end
-
-  defp broadcast({:error, _reason} = error, _event), do: error
-
-  defp broadcast({:ok, meeting}, event) do
-    Phoenix.PubSub.broadcast(Bookclub.PubSub, "meetings", {event, meeting})
-    {:ok, meeting}
   end
 end

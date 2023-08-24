@@ -1,4 +1,4 @@
-defmodule Bookclub.Meetings.Votes.User do
+defmodule Bookclub.Elections.Votes.User do
   use Ecto.Schema
   import Ecto.Changeset
 

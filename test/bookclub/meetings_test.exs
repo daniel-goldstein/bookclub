@@ -21,11 +21,11 @@ defmodule Bookclub.MeetingsTest do
     end
 
     test "create_meeting/1 with valid data creates a meeting" do
-      valid_attrs = %{name: "some name", date: ~D[2023-08-17]}
+      valid_attrs = %{name: "some name", date: ~D[2023-08-23]}
 
       assert {:ok, %Meeting{} = meeting} = Meetings.create_meeting(valid_attrs)
       assert meeting.name == "some name"
-      assert meeting.date == ~D[2023-08-17]
+      assert meeting.date == ~D[2023-08-23]
     end
 
     test "create_meeting/1 with invalid data returns error changeset" do
@@ -34,11 +34,11 @@ defmodule Bookclub.MeetingsTest do
 
     test "update_meeting/2 with valid data updates the meeting" do
       meeting = meeting_fixture()
-      update_attrs = %{name: "some updated name", date: ~D[2023-08-18]}
+      update_attrs = %{name: "some updated name", date: ~D[2023-08-24]}
 
       assert {:ok, %Meeting{} = meeting} = Meetings.update_meeting(meeting, update_attrs)
       assert meeting.name == "some updated name"
-      assert meeting.date == ~D[2023-08-18]
+      assert meeting.date == ~D[2023-08-24]
     end
 
     test "update_meeting/2 with invalid data returns error changeset" do

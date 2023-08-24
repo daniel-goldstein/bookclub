@@ -1,44 +1,30 @@
-/* This file is for your main application CSS */
-@import "./phoenix.css";
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+hr {
+    border:0;
+    border-top:0.1rem solid #f4f5f6;
+    margin:2.0rem 0;
+}
 
 /* Safari zooms in if the input font size is <16px */
 input {
     font-size: 16px;
 }
 
-textarea {
-    font-family: "Helvetica Neue"
-}
-input[type=text], input[type=date] {
-    font-family: "Helvetica Neue";
-}
-
-/* https://www.w3schools.com/howto/howto_js_accordion.asp */
-/* Style the buttons that are used to open and close the accordion panel */
-.accordion {
-  background-color: #eee;
-  color: #444;
-  cursor: pointer;
-  padding: 18px;
-  width: 100%;
-  text-align: left;
-  border: none;
-  outline: none;
-  transition: 0.4s;
-}
-
-/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
-.active, .accordion:hover {
-  background-color: #ccc;
-}
-
 /* Style the accordion panel. Note: hidden by default */
 .panel {
+  margin-bottom: 2px;
   padding: 0 18px;
   background-color: white;
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.2s ease-out;
+  transition: max-height + 10 0.3s ease-out, padding-top 0.3s ease-out;
 }
 
 /* Alerts and form errors used by phx.new */
@@ -104,10 +90,11 @@ input[type=text], input[type=date] {
 
 .phx-modal-content {
   background-color: #fefefe;
-  margin: 15vh auto;
+  margin: 5vh auto;
   padding: 20px;
   border: 1px solid #888;
-  width: 80%;
+  border-radius: 0.375rem;
+  width: 95%;
 }
 
 .phx-modal-close {

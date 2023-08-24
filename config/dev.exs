@@ -26,7 +26,8 @@ config :bookclub, BookclubWeb.Endpoint,
   secret_key_base: "SUbLyJDjzAK0D4zuiEKyppsS+uhdfBxR+88tmq4I7rMhTfwf2C7eyisysDS/xlfi",
   watchers: [
     # Start the esbuild watcher by calling Esbuild.install_and_run(:default, args)
-    esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]}
+    esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]},
+    tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]}
   ]
 
 # ## SSL Support

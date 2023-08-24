@@ -1,22 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <meta name="csrf-token" content={csrf_token_value()}>
-    <%= live_title_tag assigns[:page_title] || "Bookclub", suffix: " · Phoenix Framework" %>
-    <link phx-track-static rel="stylesheet" href={Routes.static_path(@conn, "/assets/app.css")}/>
-    <script defer phx-track-static type="text/javascript" src={Routes.static_path(@conn, "/assets/app.js")}></script>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta property="og:title" content="Kya's Book Club" />
+    <meta property="og:image" content={Routes.static_path(@conn, "/images/reading_bitten.jpg")} />
+    <meta
+      property="apple-touch-icon"
+      content={Routes.static_path(@conn, "/images/reading_bitten.jpg")}
+    />
+    <meta name="csrf-token" content={csrf_token_value()} />
+    <link rel="apple-touch-icon" href="/images/apple-touch-icon.png" />
+    <%= live_title_tag(assigns[:page_title] || "", suffix: " · Book Club") %>
+    <link phx-track-static rel="stylesheet" href={Routes.static_path(@conn, "/assets/app.css")} />
+    <script
+      defer
+      phx-track-static
+      type="text/javascript"
+      src={Routes.static_path(@conn, "/assets/app.js")}
+    >
+    </script>
   </head>
-  <body>
+  <body class="container">
     <header>
-      <section class="container">
+      <section>
         <nav>
-          <ul>
+          <ul class="flex justify-around mt-5 mb-8 px-10">
             <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
-              <li><%= link "LiveDashboard", to: Routes.live_dashboard_path(@conn, :home) %></li>
+              <li class="mx-3">
+                <%= link("LiveDashboard",
+                  to: Routes.live_dashboard_path(@conn, :home),
+                  class: "text-blue-500 hover:text-blue-600"
+                ) %>
+              </li>
             <% end %>
+            <li class="mx-3">
+              <%= link("Meetings",
+                to: Routes.meeting_index_path(@conn, :index),
+                class: "text-blue-500 hover:text-blue-600"
+              ) %>
+            </li>
+            <li class="mx-3">
+              <%= link("Elections",
+                to: Routes.election_index_path(@conn, :index),
+                class: "text-blue-500 hover:text-blue-600"
+              ) %>
+            </li>
+            <li class="mx-3">
+              <%= link("Bookshelf",
+                to: Routes.book_index_path(@conn, :index),
+                class: "text-blue-500 hover:text-blue-600"
+              ) %>
+            </li>
           </ul>
         </nav>
       </section>

@@ -1,0 +1,71 @@
+<div class="flex-col justify-center m-5">
+  <h1 class="text-4xl my-5 mb-2">Bookshelf</h1>
+  <p class="italic font-extralight text-slate-700 mb-8">
+    &ldquo;Decorating consists mostly of building enough bookshelves.&rdquo; - Anna Quindlen
+  </p>
+
+  <%= if @live_action in [:new, :edit] do %>
+    <.modal return_to={Routes.book_index_path(@socket, :index)}>
+      <h2 class="text-2xl my-5">Add Book</h2>
+      <.live_component
+        module={BookclubWeb.BookLive.FormComponent}
+        id={@book.id || :new}
+        title={@page_title}
+        action={@live_action}
+        book={@book}
+        search={%{}}
+        search_bookshelf={false}
+      />
+    </.modal>
+  <% end %>
+
+  <button class="bg-blue-500 text-white rounded-md px-6 py-2">
+    <%= live_patch("Add Book", to: Routes.book_index_path(@socket, :new)) %>
+  </button>
+
+  <div id="books" class="my-5 max-w-full">
+    <%= for book <- @books do %>
+      <div x-data="{open: false}">
+        <div
+          id={"book-#{book.id}"}
+          class="shadow flex justify-between items-center cursor-pointer my-1 h-20 rounded-md p-2 hover:bg-slate-50"
+          @click="open=!open"
+        >
+          <div class="w-5/6">
+            <div class="flex items-center">
+              <div class="w-10">
+                <%= if book.cover_id do %>
+                  <img src={"https://covers.openlibrary.org/b/id/#{book.cover_id}-S.jpg"} />
+                <% end %>
+              </div>
+
+              <div class="flex-col pl-3">
+                <div><%= book.title %></div>
+                <div class="italic font-extralight"><%= book.author %></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="w-1/6 flex justify-around">
+            <span>
+              <%= live_patch(Heroicons.icon("pencil", type: "outline", class: "h-5 w-5 stroke-1"),
+                to: Routes.book_index_path(@socket, :edit, book)
+              ) %>
+            </span>
+            <span class={
+              if book.book_nominations == [] and book.meetings == [], do: "", else: "invisible"
+            }>
+              <%= link(Heroicons.icon("trash", type: "outline", class: "h-5 w-5 stroke-1"),
+                to: "#",
+                phx_click: "delete",
+                phx_value_id: book.id,
+                data: [confirm: "Are you sure?"]
+              ) %>
+            </span>
+          </div>
+        </div>
+        <.book_description_panel socket={@socket} book={book} />
+      </div>
+    <% end %>
+  </div>
+</div>

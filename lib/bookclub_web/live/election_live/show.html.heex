@@ -1,0 +1,113 @@
+<div class="flex-col justify-center m-5">
+  <%= live_redirect(Heroicons.icon("arrow-left", type: "outline", class: "h-5 w-5 text-blue-500"),
+    to: Routes.election_index_path(@socket, :index)
+  ) %>
+
+  <h1 class="text-4xl my-5 mb-8"><%= @election.date %></h1>
+
+  <%= if @live_action in [:nominate] do %>
+    <.modal return_to={Routes.election_show_path(@socket, :show, @election)}>
+      <h2 class="text-2xl my-5">Nominate a Book</h2>
+      <.live_component
+        module={BookclubWeb.BookLive.FormComponent}
+        id={@book.id || :new}
+        title={@page_title}
+        action={@live_action}
+        book={@book}
+        search={%{}}
+        search_bookshelf={true}
+      />
+    </.modal>
+  <% end %>
+
+  <button class="bg-blue-500 text-white rounded-md px-5 py-2">
+    <%= live_patch("Nominate",
+      to: Routes.election_show_path(@socket, :nominate, @election),
+      class: "button"
+    ) %>
+  </button>
+
+  <div class="my-4">
+    <%= for nomination <- @nominations do %>
+      <div x-data="{open: false}">
+        <div
+          class="my-1 rounded-md p-2 h-20 shadow cursor-pointer hover:bg-slate-50 flex justify-between items-center"
+          @click="open=!open"
+        >
+          <div class="flex items-center">
+            <div class="w-10">
+              <%= if nomination.book.cover_id do %>
+                <img src={"https://covers.openlibrary.org/b/id/#{nomination.book.cover_id}-S.jpg"} />
+              <% end %>
+            </div>
+            <div class="flex-col pl-5">
+              <span><%= nomination.book.title %></span>
+              <div class="italic font-extralight"><%= nomination.book.author %></div>
+            </div>
+          </div>
+          <span>
+            <%= link(Heroicons.icon("trash", type: "outline", class: "h-5 w-5 stroke-1"),
+              to: "#",
+              phx_click: "delete",
+              phx_value_id: nomination.id,
+              data: [confirm: "Are you sure?"]
+            ) %>
+          </span>
+        </div>
+        <.book_description_panel book={nomination.book} socket={@socket} />
+      </div>
+    <% end %>
+  </div>
+
+  <h2 class="text-2xl mt-8 mb-2">Vote!</h2>
+
+  <.live_component
+    module={BookclubWeb.ElectionLive.VoteFormComponent}
+    id={:vote}
+    action={@live_action}
+    election={@election}
+    nominations={@nominations}
+    return_to={Routes.election_show_path(@socket, :show, @election)}
+  />
+
+  <div class="my-10">
+    <div phx-click="toggle_results" class="flex items-center hover:bg-slate-50 cursor-pointer">
+      <div class="pr-2">
+        <%= Heroicons.icon(
+          case @show_results do
+            true -> "chevron-down"
+            _ -> "chevron-right"
+          end,
+          type: "outline",
+          class: "h-5 w-5"
+        ) %>
+      </div>
+      <h2 class="text-2xl">Voting Results</h2>
+    </div>
+
+    <%= if @show_results do %>
+      <div class="mt-4">
+        <%= if @winner do %>
+          <div>
+            <span><b>Winner</b>: <%= @winner.book.title %></span>
+          </div>
+        <% end %>
+
+        <div id="voting-results" class="mt-2 p-2">
+          <%= for nomination <- @last_round do %>
+            <div id={"results-#{nomination.id}"} class="flex justify-between p-1">
+              <span><%= nomination.book.title %></span>
+              <span><%= Map.get(@rankings, nomination.id) |> Enum.join(" , ") %></span>
+            </div>
+          <% end %>
+          <%= for nomination <- @losers do %>
+            <div id={"results-#{nomination.id}"} class="flex justify-between p-1 text-slate-400">
+              <span><%= nomination.book.title %></span>
+              <span><%= Map.get(@rankings, nomination.id) |> Enum.join(" , ") %></span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

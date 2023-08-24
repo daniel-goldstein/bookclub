@@ -1,12 +1,14 @@
 defmodule BookclubWeb.MeetingLive.Index do
   use BookclubWeb, :live_view
 
+  alias Bookclub.Ranking
+  alias Bookclub.Elections
+  alias Bookclub.Elections.BookNominations
   alias Bookclub.Meetings
   alias Bookclub.Meetings.Meeting
 
   @impl true
   def mount(_params, _session, socket) do
-    if connected?(socket), do: Meetings.subscribe()
     {:ok, assign(socket, :meetings, list_meetings())}
   end
 
@@ -16,15 +18,19 @@ defmodule BookclubWeb.MeetingLive.Index do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
+    meeting = Meetings.get_meeting!(id)
+
     socket
     |> assign(:page_title, "Edit Meeting")
-    |> assign(:meeting, Meetings.get_meeting!(id))
+    |> assign(:meeting, meeting)
+    |> assign(:book, meeting.book)
   end
 
   defp apply_action(socket, :new, _params) do
     socket
     |> assign(:page_title, "New Meeting")
     |> assign(:meeting, %Meeting{})
+    |> assign(:book, get_most_recent_election_winner())
   end
 
   defp apply_action(socket, :index, _params) do
@@ -41,23 +47,24 @@ defmodule BookclubWeb.MeetingLive.Index do
     {:noreply, assign(socket, :meetings, list_meetings())}
   end
 
-  @impl true
-  def handle_info({:meeting_created, meeting}, socket) do
-    {:noreply, update(socket, :meetings, fn meetings -> [meeting | meetings] end)}
-  end
-
-  @impl true
-  def handle_info({:meeting_updated, meeting}, socket) do
-    {:noreply, update(socket, :meetings, fn meetings -> [meeting | meetings] end)}
-  end
-
-  @impl true
-  def handle_info({:meeting_deleted, deleted}, socket) do
-    {:noreply,
-     update(socket, :meetings, fn meetings -> Enum.filter(meetings, &(&1.id != deleted.id)) end)}
-  end
-
   defp list_meetings do
     Meetings.list_meetings()
+  end
+
+  defp get_most_recent_election_winner() do
+    Elections.get_most_recent_election()
+    |> nil_map(fn election ->
+      BookNominations.list_nominations(election.id)
+      |> Ranking.condorcet()
+      |> List.first()
+    end)
+    |> nil_map(fn winner -> winner.book end)
+  end
+
+  defp nil_map(x, f) do
+    case x do
+      nil -> nil
+      _ -> f.(x)
+    end
   end
 end

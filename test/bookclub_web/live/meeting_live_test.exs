@@ -4,8 +4,8 @@ defmodule BookclubWeb.MeetingLiveTest do
   import Phoenix.LiveViewTest
   import Bookclub.MeetingsFixtures
 
-  @create_attrs %{name: "some name", date: %{month: 8, day: 17, year: 2023}}
-  @update_attrs %{name: "some updated name", date: %{month: 8, day: 18, year: 2023}}
+  @create_attrs %{name: "some name", date: %{month: 8, day: 23, year: 2023}}
+  @update_attrs %{name: "some updated name", date: %{month: 8, day: 24, year: 2023}}
   @invalid_attrs %{name: nil, date: %{month: 2, day: 30, year: 2023}}
 
   defp create_meeting(_) do
