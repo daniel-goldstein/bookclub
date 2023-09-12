@@ -25,7 +25,7 @@ defmodule BookclubWeb.MeetingLive.FormComponent do
   @impl true
   def handle_event(
         "validate",
-        %{"meeting" => meeting_params, "_target" => ["meeting", "book_title"]} = params,
+        %{"meeting" => meeting_params, "_target" => ["meeting", "book_title"]},
         socket
       ) do
     title = meeting_params["book_title"]
@@ -46,7 +46,7 @@ defmodule BookclubWeb.MeetingLive.FormComponent do
   end
 
   @impl true
-  def handle_event("validate", %{"meeting" => meeting_params} = params, socket) do
+  def handle_event("validate", %{"meeting" => meeting_params}, socket) do
     changeset =
       socket.assigns.meeting
       |> Meetings.change_meeting(meeting_params)

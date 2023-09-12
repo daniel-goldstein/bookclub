@@ -2,7 +2,6 @@ defmodule BookclubWeb.BookLive.FormComponent do
   use BookclubWeb, :live_component
 
   alias Bookclub.Books
-  alias Bookclub.Books.Book
   alias Bookclub.OpenLibrary
 
   @impl true
