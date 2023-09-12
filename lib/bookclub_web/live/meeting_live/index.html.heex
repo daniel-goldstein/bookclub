@@ -23,16 +23,19 @@
     <%= for meeting <- @meetings do %>
       <div
         id={"meeting-#{meeting.id}"}
-        class="shadow flex justify-between items-center my-1 rounded-md p-2 h-20"
+        class="shadow flex justify-between items-center my-1 rounded-md p-2 h-20 hover:cursor-pointer hover:bg-slate-50 relative"
       >
+        <.link navigate={Routes.meeting_show_path(@socket, :show, meeting)}>
+          <span class="absolute w-full h-full top-0 left-0 z-10"></span>
+        </.link>
         <div class="w-10">
           <%= if meeting.book && meeting.book.cover_id do %>
             <img src={"https://covers.openlibrary.org/b/id/#{meeting.book.cover_id}-S.jpg"} />
           <% end %>
         </div>
 
-        <div class="text-left w-1/3 pl-2 text-blue-500 font-light">
-          <%= live_redirect(meeting.name, to: Routes.meeting_show_path(@socket, :show, meeting)) %>
+        <div class="text-left w-1/3 pl-2 font-light">
+          <%= meeting.name %>
         </div>
 
         <div class="text-center w-1/3 font-light">
@@ -41,12 +44,22 @@
 
         <div class="w-1/6 flex justify-around">
           <span>
-            <%= live_patch(Heroicons.icon("pencil", type: "outline", class: "h-5 w-5 stroke-1"),
+            <%= live_patch(
+              Heroicons.icon("pencil",
+                id: "edit-#{meeting.id}",
+                type: "outline",
+                class: "h-5 w-5 stroke-1"
+              ),
               to: Routes.meeting_index_path(@socket, :edit, meeting)
             ) %>
           </span>
           <span>
-            <%= link(Heroicons.icon("trash", type: "outline", class: "h-5 w-5 stroke-1"),
+            <%= link(
+              Heroicons.icon("trash",
+                id: "delete-#{meeting.id}",
+                type: "outline",
+                class: "h-5 w-5 stroke-1"
+              ),
               to: "#",
               phx_click: "delete",
               phx_value_id: meeting.id,

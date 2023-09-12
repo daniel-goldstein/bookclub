@@ -22,12 +22,13 @@
     <%= for election <- @elections do %>
       <div
         id={"election-#{election.id}"}
-        class="shadow flex justify-between items-center my-1 rounded-md py-5"
+        class="shadow flex justify-between items-center my-1 rounded-md py-5 hover:cursor-pointer hover:bg-slate-50 relative"
       >
-        <div class="px-5 text-left basis-1/2 text-blue-500 font-light">
-          <%= live_redirect(election.date,
-            to: Routes.election_show_path(@socket, :show, election)
-          ) %>
+        <.link navigate={Routes.election_show_path(@socket, :show, election)}>
+          <span class="absolute w-full h-full top-0 left-0 z-10"></span>
+        </.link>
+        <div class="px-5 text-left basis-1/2 font-light">
+          <%= election.date %>
         </div>
 
         <div class="basis-1/2" />
