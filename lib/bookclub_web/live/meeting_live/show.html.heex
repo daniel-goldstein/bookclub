@@ -61,7 +61,7 @@
 
   <div id="notes" class="my-5 max-w-full">
     <%= for note <- @notes do %>
-      <%= live_component(@socket, BookclubWeb.MeetingLive.NoteComponent,
+      <%= live_component(BookclubWeb.MeetingLive.NoteComponent,
         id: note.id,
         note: note,
         meeting: @meeting,

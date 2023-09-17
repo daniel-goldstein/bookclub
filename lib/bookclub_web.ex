@@ -45,7 +45,7 @@ defmodule BookclubWeb do
   def live_view do
     quote do
       use Phoenix.LiveView,
-        layout: {BookclubWeb.LayoutView, "live.html"}
+        layout: {BookclubWeb.LayoutView, :live}
 
       unquote(view_helpers())
     end
