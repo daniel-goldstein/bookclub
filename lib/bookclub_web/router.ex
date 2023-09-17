@@ -19,7 +19,6 @@ defmodule BookclubWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
-    live "/light", LightLive
 
     live "/elections", ElectionLive.Index, :index
     live "/elections/new", ElectionLive.Index, :new
