@@ -42,11 +42,10 @@
           <%= meeting.date %>
         </div>
 
-        <div class="w-1/6 flex justify-around">
+        <div class="w-1/6 flex justify-around z-20">
           <span>
             <%= live_patch(
               Heroicons.icon("pencil",
-                id: "edit-#{meeting.id}",
                 type: "outline",
                 class: "h-5 w-5 stroke-1"
               ),
@@ -56,7 +55,6 @@
           <span>
             <%= link(
               Heroicons.icon("trash",
-                id: "delete-#{meeting.id}",
                 type: "outline",
                 class: "h-5 w-5 stroke-1"
               ),
