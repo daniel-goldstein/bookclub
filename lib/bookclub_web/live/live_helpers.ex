@@ -1,6 +1,7 @@
 defmodule BookclubWeb.LiveHelpers do
   import Phoenix.Component
   import Phoenix.HTML.Form
+  import Phoenix.LiveView.Helpers
 
   alias Phoenix.LiveView.JS
 
@@ -244,6 +245,23 @@ defmodule BookclubWeb.LiveHelpers do
       </div>
       <p class="mb-2"><%= @book.description %></p>
     </div>
+    """
+  end
+
+  def pencil(assigns) do
+    ~H"""
+    <%= live_patch(
+      Heroicons.icon("pencil", type: "outline", class: "h-5 w-5 stroke-1"),
+      to: @to
+    ) %>
+    """
+  end
+
+  def trash(assigns) do
+    ~H"""
+    <.link to="#" phx-click="delete" phx-value-id={@value} data={[confirm: "Are you sure?"]}>
+      <%= Heroicons.icon("trash", type: "outline", class: "h-5 w-5 stroke-1") %>
+    </.link>
     """
   end
 end

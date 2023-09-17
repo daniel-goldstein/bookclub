@@ -35,20 +35,13 @@
 
         <div class="basis-1/4 z-20">
           <span>
-            <%= live_patch(Heroicons.icon("pencil", type: "outline", class: "h-5 w-5 stroke-1"),
-              to: Routes.election_index_path(@socket, :edit, election)
-            ) %>
+            <.pencil to={Routes.election_index_path(@socket, :edit, election)} />
           </span>
         </div>
 
         <div class="basis-1/4 z-20">
           <span>
-            <%= link(Heroicons.icon("trash", type: "outline", class: "h-5 w-5 stroke-1"),
-              to: "#",
-              phx_click: "delete",
-              phx_value_id: election.id,
-              data: [confirm: "Are you sure?"]
-            ) %>
+            <.trash value={election.id} />
           </span>
         </div>
       </div>

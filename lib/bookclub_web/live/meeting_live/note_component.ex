@@ -14,12 +14,8 @@ defmodule BookclubWeb.MeetingLive.NoteComponent do
         phx-no-format
       ><%= @note.content %></p>
       <div class="mt-5 flex justify-around">
-        <%= live_patch to: Routes.meeting_show_path(@socket, :edit, @meeting, @note) do %>
-          <span><%= Heroicons.icon("pencil", type: "outline", class: "h-5 w-5 stroke-1") %></span>
-        <% end %>
-        <%= link to: "#", phx_click: "delete", phx_value_id: @note.id, data: [confirm: "Are you sure?"] do %>
-          <span><%= Heroicons.icon("trash", type: "outline", class: "h-5 w-5 stroke-1") %></span>
-        <% end %>
+        <span><.pencil to={Routes.meeting_show_path(@socket, :edit, @meeting, @note)} /></span>
+        <span><.trash value={@note.id} /></span>
       </div>
     </div>
     """

@@ -48,19 +48,12 @@
 
           <div class="w-1/6 flex justify-around">
             <span>
-              <%= live_patch(Heroicons.icon("pencil", type: "outline", class: "h-5 w-5 stroke-1"),
-                to: Routes.book_index_path(@socket, :edit, book)
-              ) %>
+              <.pencil to={Routes.book_index_path(@socket, :edit, book)} />
             </span>
             <span class={
               if book.book_nominations == [] and book.meetings == [], do: "", else: "invisible"
             }>
-              <%= link(Heroicons.icon("trash", type: "outline", class: "h-5 w-5 stroke-1"),
-                to: "#",
-                phx_click: "delete",
-                phx_value_id: book.id,
-                data: [confirm: "Are you sure?"]
-              ) %>
+              <.trash value={book.id} />
             </span>
           </div>
         </div>

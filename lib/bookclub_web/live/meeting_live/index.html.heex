@@ -44,25 +44,10 @@
 
         <div class="w-1/6 flex justify-around z-20">
           <span>
-            <%= live_patch(
-              Heroicons.icon("pencil",
-                type: "outline",
-                class: "h-5 w-5 stroke-1"
-              ),
-              to: Routes.meeting_index_path(@socket, :edit, meeting)
-            ) %>
+            <.pencil to={Routes.meeting_index_path(@socket, :edit, meeting)} />
           </span>
           <span>
-            <%= link(
-              Heroicons.icon("trash",
-                type: "outline",
-                class: "h-5 w-5 stroke-1"
-              ),
-              to: "#",
-              phx_click: "delete",
-              phx_value_id: meeting.id,
-              data: [confirm: "Are you sure?"]
-            ) %>
+            <.trash value={meeting.id} />
           </span>
         </div>
       </div>

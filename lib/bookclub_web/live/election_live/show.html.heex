@@ -46,12 +46,7 @@
             </div>
           </div>
           <span>
-            <%= link(Heroicons.icon("trash", type: "outline", class: "h-5 w-5 stroke-1"),
-              to: "#",
-              phx_click: "delete",
-              phx_value_id: nomination.id,
-              data: [confirm: "Are you sure?"]
-            ) %>
+            <.trash value={nomination.id} />
           </span>
         </div>
         <.book_description_panel book={nomination.book} socket={@socket} />
