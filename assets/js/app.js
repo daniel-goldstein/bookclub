@@ -28,27 +28,54 @@ import Alpine from "../vendor/alpine"
 // https://fly.io/phoenix-files/liveview-drag-and-drop/
 let Hooks = {}
 Hooks.Sortable = {
-  mounted(){
-    let group = this.el.dataset.group
-    let sorter = new Sortable(this.el, {
-      group: group ? group : undefined,
-      animation: 150,
-      delay: 100,
-      dragClass: "drag-item",
-      ghostClass: "drag-ghost",
-      forceFallback: true,
-      onEnd: e => {
-        let params = {old: e.oldIndex, new: e.newIndex, to: e.to.dataset, ...e.item.dataset}
-        this.pushEventTo(this.el, "reposition", params)
-      }
-    })
-  }
+    mounted() {
+        let group = this.el.dataset.group
+        let sorter = new Sortable(this.el, {
+            group: group ? group : undefined,
+            animation: 150,
+            delay: 100,
+            dragClass: "drag-item",
+            ghostClass: "drag-ghost",
+            forceFallback: true,
+            onEnd: e => {
+                let params = {old: e.oldIndex, new: e.newIndex, to: e.to.dataset, ...e.item.dataset}
+                this.pushEventTo(this.el, "reposition", params)
+            }
+        })
+    }
 }
 
 Hooks.NestedClickable = {
-  mounted(){
-    this.el.addEventListener("click", e => e.stopImmediatePropagation())
-  }
+    mounted() {
+        this.el.addEventListener("click", e => e.stopPropagation())
+    }
+}
+
+Hooks.EventLogger = {
+    mounted() {
+        this.el.addEventListener("click", e => console.log(e))
+    }
+}
+
+
+Hooks.TGV = {
+    mounted(){
+        this.el.addEventListener("click", e => {
+            /* I don't really understand the order in which phx-hook, phx-click
+             * and alpine events execute. This felt harder than it should have been
+             * and is still hacky.
+             */
+            if (e.target.id != this.el.id) return;
+
+            let audio = document.getElementById(this.el.dataset.audio)
+            if (audio.paused) {
+                audio.play()
+            } else {
+                audio.pause()
+                audio.currentTime = 0
+            }
+        })
+    }
 }
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")

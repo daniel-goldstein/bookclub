@@ -1,5 +1,8 @@
 <div class="flex-col justify-center m-5">
-  <h1 class="text-4xl my-5 mb-8">Meetings</h1>
+  <!-- Maia requested this easter egg. not my fault -->
+  <audio id="full-tgv-audio" src={Routes.static_path(@socket, "/assets/tgv-full.mp3")} />
+
+  <h1 id="full-tgv" class="text-4xl my-5 mb-8" phx-hook="TGV">Meetings</h1>
 
   <%= if @live_action in [:new, :edit] do %>
     <.modal return_to={Routes.meeting_index_path(@socket, :index)}>

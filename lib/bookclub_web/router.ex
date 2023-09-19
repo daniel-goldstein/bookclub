@@ -8,7 +8,6 @@ defmodule BookclubWeb.Router do
     plug :put_root_layout, {BookclubWeb.LayoutView, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
-    plug Plug.Static, at: "/", from: "priv/static/images"
   end
 
   pipeline :api do

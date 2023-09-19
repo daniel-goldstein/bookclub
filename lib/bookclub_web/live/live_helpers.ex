@@ -259,7 +259,7 @@ defmodule BookclubWeb.LiveHelpers do
 
   def trash(assigns) do
     ~H"""
-    <.link to="#" phx-click="delete" phx-value-id={@value} data={[confirm: "Are you sure?"]}>
+    <.link to="#" id={"trash=#{@value}"} phx-click="delete" phx-value-id={@value} data={[confirm: "Are you sure?"]}>
       <%= Heroicons.icon("trash", type: "outline", class: "h-5 w-5 stroke-1") %>
     </.link>
     """
