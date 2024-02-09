@@ -99,7 +99,6 @@ defmodule BookclubWeb.ElectionLive.Show do
 
     {:noreply,
      socket
-     |> assign(:nominations, books)
      |> assign(recount(books))}
   end
 

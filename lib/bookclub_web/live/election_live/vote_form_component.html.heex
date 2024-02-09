@@ -13,7 +13,7 @@
 
     <.my_label f={f} field={:ranking} />
     <div id="voting" phx-hook="Sortable" data-list_id="ballot">
-      <%= for {nomination, i} <- Enum.with_index(@nominations) do %>
+      <%= for {nomination, i} <- Enum.with_index(@nominations_ordered) do %>
         <div
           class="shadow items-center my-1 rounded-md p-4 hover:bg-slate-50 cursor-grab"
           id={"ballot-#{nomination.id}"}

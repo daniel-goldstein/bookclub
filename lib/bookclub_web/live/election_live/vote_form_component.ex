@@ -12,15 +12,17 @@ defmodule BookclubWeb.ElectionLive.VoteFormComponent do
     {:ok,
      socket
      |> assign(:user, user)
-     |> assign(:changeset, User.changeset(user))}
+     |> assign(:changeset, User.changeset(user))
+     |> assign(:nominations_ordered, [])}
   end
 
   @impl true
   def update(%{nominations: nominations} = assigns, socket) do
+    existing = socket.assigns.nominations_ordered
     {:ok,
      socket
      |> assign(assigns)
-     |> assign(:nominations, nominations)}
+     |> assign(:nominations_ordered, add_nominations(existing, nominations))}
   end
 
   @impl true
@@ -35,12 +37,12 @@ defmodule BookclubWeb.ElectionLive.VoteFormComponent do
 
   @impl true
   def handle_event("reposition", %{"old" => old, "new" => new}, socket) do
-    nominations = socket.assigns.nominations
+    old_order = socket.assigns.nominations_ordered
 
-    {moved, others} = List.pop_at(nominations, old)
-    nominations = List.insert_at(others, new, moved)
+    {moved, others} = List.pop_at(old_order, old)
+    new_order = List.insert_at(others, new, moved)
 
-    {:noreply, assign(socket, :nominations, nominations)}
+    {:noreply, assign(socket, :nominations_ordered, new_order)}
   end
 
   @impl true
@@ -56,6 +58,15 @@ defmodule BookclubWeb.ElectionLive.VoteFormComponent do
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, :changeset, changeset)}
+    end
+  end
+
+  defp add_nominations(current_nominations, []), do: current_nominations
+  defp add_nominations(current_nominations, [book | rest]) do
+    if not Enum.member?(current_nominations, book) do
+      add_nominations(current_nominations, rest) ++ [book]
+    else
+      add_nominations(current_nominations, rest)
     end
   end
 end
