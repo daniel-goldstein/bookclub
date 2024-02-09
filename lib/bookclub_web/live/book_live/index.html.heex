@@ -1,6 +1,4 @@
 <div class="flex-col justify-center m-5">
-  <audio id="tgv" src={Routes.static_path(@socket, "/assets/tgv.mp3")} />
-
   <h1 class="text-4xl my-5 mb-2">Bookshelf</h1>
   <p class="italic font-extralight text-slate-700 mb-8">
     &ldquo;Decorating consists mostly of building enough bookshelves.&rdquo; - Anna Quindlen
@@ -33,7 +31,7 @@
           class="shadow flex justify-between items-center cursor-pointer my-1 h-20 rounded-md p-2 hover:bg-slate-50"
           @click="open=!open"
         >
-          <div class="w-4/5">
+          <div class="w-5/6">
             <div class="flex items-center">
               <div class="w-10">
                 <%= if book.cover_id do %>
@@ -48,17 +46,15 @@
             </div>
           </div>
 
-          <div class="w-1/5 flex justify-around h-full items-center">
-            <span class="w-1/2 h-full flex items-center justify-center">
+          <div class="w-1/6 flex justify-around">
+            <span>
               <.pencil to={Routes.book_index_path(@socket, :edit, book)} />
             </span>
-            <div id={"tgv-#{book.id}"} class={["w-1/2 h-full flex items-center justify-center"] ++
-              if book.book_nominations == [] and book.meetings == [], do: [], else: ["invisible"]
-            } data-audio="tgv" phx-hook="TGV">
-              <div id={"stop-#{book.id}"}>
-                <.trash value={book.id} />
-              </div>
-            </div>
+            <span class={
+              if book.book_nominations == [] and book.meetings == [], do: "", else: "invisible"
+            }>
+              <.trash value={book.id} />
+            </span>
           </div>
         </div>
         <.book_description_panel socket={@socket} book={book} />
