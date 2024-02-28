@@ -47,9 +47,9 @@ defmodule BookclubWeb.ElectionLive.VoteFormComponent do
 
   @impl true
   def handle_event("vote", %{"user" => user_params}, socket) do
-    %{election: election, nominations: nominations} = socket.assigns
+    %{election: election, nominations_ordered: nominations_ordered} = socket.assigns
 
-    case BookNominations.cast_votes(user_params["user"], election, nominations) do
+    case BookNominations.cast_votes(user_params["user"], election, nominations_ordered) do
       {:ok, _} ->
         {:noreply,
          socket
@@ -64,7 +64,7 @@ defmodule BookclubWeb.ElectionLive.VoteFormComponent do
   defp add_nominations(current_nominations, []), do: current_nominations
   defp add_nominations(current_nominations, [book | rest]) do
     if not Enum.member?(current_nominations, book) do
-      add_nominations(current_nominations, rest) ++ [book]
+      [book | add_nominations(current_nominations, rest)]
     else
       add_nominations(current_nominations, rest)
     end

@@ -128,14 +128,6 @@ defmodule BookclubWeb.ElectionLive.Show do
   end
 
   defp recount(books) do
-    # {last_round, losers} = Ranking.instant_runoff(books)
-
-    # winner =
-    #   case last_round do
-    #     [] -> nil
-    #     [winner | others] -> winner
-    #   end
-
     last_round = Ranking.condorcet(books)
     losers = []
 
