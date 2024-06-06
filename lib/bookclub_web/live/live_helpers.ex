@@ -243,7 +243,7 @@ defmodule BookclubWeb.LiveHelpers do
         <h2 class="x-2/3 bold text-xl pr-2"><%= @book.title %></h2>
         <.goodreads_link book={@book} socket={@socket} />
       </div>
-      <p class="mb-2"><%= @book.description %></p>
+      <p class="mb-2 whitespace-pre-line"><%= @book.description %></p>
     </div>
     """
   end
