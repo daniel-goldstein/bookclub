@@ -14,8 +14,8 @@ swap_size_mb = 512
   release_command = "/app/bin/migrate"
 
 [env]
-  # PHX_HOST = "kyasbook.club"
-  PHX_HOST = "kyasbookclub.fly.dev"
+  PHX_HOST = "kyasbook.club"
+  # PHX_HOST = "kyasbookclub.fly.dev"
   PORT = "8080"
 
 [http_service]
